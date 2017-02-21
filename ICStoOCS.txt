@@ -1,0 +1,37 @@
+function [ positionOCS, angvOCS ] = ICStoOCS(positionICS, i, w, W, v)
+
+%given the inclinatation (i), the argument of perigee (w), the right ascension (W) and the initial position of the satellite with respect to the inertial coordinate system, we calculate the position with respect to the orbital coordinate system
+
+%given the velocity (v) with respect to the inertial coordinate system, we calculate the angular velocity vector with respect to the orbital coordinate system
+
+%calculating the matrix of transformation
+matrix2=[((cosd(w))*(cosd(W))) - ((sind(w))*(cosd(i))*(sind(W))), (((cosd(w))*(sind(W))) + ((sind(w))*(cosd(i))*(cosd(W)))),((sind(w))*(sind(i))); (-((sind(w))*(cosd(W)))-((cosd(w))*(cosd(i))*(sind(W)))),(-((sind(w))*(sind(W)))+((cosd(w))*(cosd(i))*(cosd(W)))),((cosd(w))*(sind(i)));((sind(i))*(sind(W))),(-(sind(i))*(cosd(W))),(cosd(i))];
+
+%multiplying the matrix by the inertial position to get the orbital position
+for k=1:3
+    positionOCS(k)=0;
+    for j=1:3
+        positionOCS(k)=positionOCS(k) + matrix2(k,j)*positionICS(j);
+    end
+end
+
+%calculating the angular velocity with respect to the inertial coordinate system from the velocity
+pICS=sqrt(((positionICS(1))^2)+((positionICS(2))^2)+((positionICS(3))^2));
+angvICS=v/pICS;
+angvmag=sqrt(((angvICS(1))^2)+((angvICS(2))^2)+((angvICS(3))^2));
+
+%getting the unit vector in the direction of the angular velocity in the inertial coordinate system
+angvdirectionICS=angvICS/angvmag;
+
+%getting the unit vector in the direction of the angular velocity in the orbital coordinate system
+for k=1:3
+    angvdirectionOCS(k)=0;
+    for j=1:3
+        angvdirectionOCS(k)=angvdirectionOCS(k) + matrix2(k,j)*angvdirectionICS(j);
+    end
+end
+
+%getting the angular velocity in the orbital coordinate system
+angvOCS=angvdirectionOCS*angvmag;
+
+end
