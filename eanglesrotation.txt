@@ -1,0 +1,16 @@
+function [ rotatedvector ] = eanglesrotation(vector, rollx, pitchy, yawz)
+
+%given the vector to be rotated, Euler roll angle (rollx) -rotation about x axis-, Euler pitch angle (pitchy) -rotation about y axis- and Euler yaw angle (yawz) -rotation about z axis-, we rotate the vector
+
+%calculating the matrix of transformation
+matrix3=[(((cosd(yawz))*(cosd(pitchy)))+((sind(yawz))*(sind(rollx))*(sind(pitchy)))),((sind(yawz))*(cosd(rollx))),(-((cosd(yawz))*(sind(pitchy)))+((sind(yawz))*(sind(rollx))*(cosd(pitchy))));(-((sind(yawz))*(cosd(pitchy)))+((cosd(yawz))*(sind(rollx))*(sind(pitchy)))),((cosd(yawz))*(cosd(rollx))),(((sind(yawz))*(sind(pitchy)))+((cosd(yawz))*(sind(rollx))*(cosd(pitchy))));((cosd(rollx))*(sind(pitchy))),(-sind(rollx)),((cosd(rollx))*(cosd(pitchy)))];
+
+%multiplying the matrix by the vector to be rotated
+rotatedvector=zeros(3,1);
+for i=1:3
+    rotatedvector(i)=0;
+    for j=1:3
+        rotatedvector(i)=rotatedvector(i) + (matrix3(i,j))*vector(j);
+    end
+end
+end
